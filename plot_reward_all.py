@@ -27,25 +27,13 @@ def get_array(name, mode='np'):
     if mode == 'np':
         x = np.load(name)
     else:
-        #file_pk = open(r'F:\TVT_Offloading_DQN\models\uav_com_u_centric\double_dqn\run1\epsode_rewards.pkl', 'rb')
-        # file_pk = open(name, 'rb')
-        # x = pickle.load(file_pk)
-        # #x = x[:20000]
-        # x = np.array(x)
-        # zz = np.linspace(0, 19994, 400) + 1
-        # zz = zz.astype(int)
-        # x = x[zz]
+        
         # 此处的scales_double_dqn/scales_dqn/scales_dueling_dqn/scales_maddpg均
         # 是从tensorboard里面导出的。
         from numpy import genfromtxt
         train = genfromtxt(name, delimiter=',')
         x = train[1:, 2]*50.0
         x = x[:400]
-
-
-    dtpc_r_all[:len(x)] = x
-    if len(x)<epoches:
-        dtpc_r_all[len(x):epoches]= x[2*len(x)-epoches:len(x)]
 
     dtpc_r_all = np.array(dtpc_r_all).reshape(100, 4).T
     dtpc_r_all = smooth_data(4, dtpc_r_all)
@@ -55,31 +43,20 @@ def get_array(name, mode='np'):
 def get_data():
     '''获取数据
     '''
-    label_list = ['FC+QMIX', 'VDN', 'IQL']
-    config_list = ['FC+QMIX', 'vdn', 'iql']
-    model_idx = ['run2', 'run1', 'run3']
 
-    #label_list = ['ATOC', 'ACML', 'MADDPG', 'DDPG','Greedy','Random']
-    #config_list = ['atoc','acml','maddpg','ddpg','ddpg','ddpg']
-    #model_idx = ['run8','run5','run10','run11']
     top_path = r'F:\TVT_Offloading\result'
-    # basecond = get_array(top_path+r'\FC+QMIX\UAV_offload\run2\episode_rewards_0.npy')
     cond0 = get_array(top_path+r'\FC\UAV_offload\run8\episode_rewards_0.npy')
     cond1 = get_array(top_path+r'\vdn\UAV_offload\run1\episode_rewards_0.npy')
-    cond2 = get_array(top_path+r'\iql\UAV_offload\run3\episode_rewards_0.npy')
 
     # export from tensorboard and thus have different styles.
     cond3 = get_array('F:\TVT_Offloading\scalars_double_dqn.csv', 'pickle')
     cond4 = get_array('F:\TVT_Offloading\scalars_dueling_dqn.csv', 'pickle')
     cond5 = get_array('F:\TVT_Offloading\scalars_maddpg.csv', 'pickle')
-    # cond4 = get_array(top_path+r'\double_dqn\run1\logs\all_reward.csv')
-    # cond5 = get_array(top_path+r'\dueling_dqn\run1\logs\all_reward.csv')
 
     return   cond0, cond5, cond1, cond3, cond4
 
 data = get_data()
 label = ['CAVDN', 'MADDPG', 'VDN', 'Double DQN', 'Dueling DQN' ]
-#['CATCP-part', 'CATCP-all', 'MADDPG', 'DDPG']
 df=[]
 for i in range(len(data)):
     tmp = pd.DataFrame(data[i]).melt(var_name='Episode', value_name='Reward')
