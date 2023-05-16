@@ -18,6 +18,8 @@ Key parameters to train the models
 | $\gamma$ | 0.95 |
 | $\tau$ | 0.001 |
 
+### Additional Experiements Results.
+Please refer to https://github.com/chenbq/CAVDN/blob/main/Additional%20Experiments.pdf
 
 ###  Run the code
 1. To train the model. run main.py
